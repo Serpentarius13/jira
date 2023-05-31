@@ -1,16 +1,22 @@
 import { computed, ref } from "vue";
 
-export function useSorting<
-  T extends Record<string | number | symbol, number | string>
->(data: T[], defaultSort?: keyof T) {
-  const sortConfig = ref<{
-    key: string | number | symbol;
-    descending?: boolean;
-  } | null>(null);
+type TObjectKeys = string | number | symbol;
+
+interface ISortConfig<T> {
+  key: keyof T;
+  descending?: boolean;
+}
+
+export function useSorting<T extends Record<TObjectKeys, number | string>>(
+  data: T[],
+  defaultSort?: keyof T,
+  defaultConfig?: ISortConfig<T>
+) {
+  const sortConfig = ref<ISortConfig<T> | null>(defaultConfig ?? null);
 
   function sortBy(key?: keyof T, descending: boolean = false): void {
     key = key ?? defaultSort ?? Object.keys(data[0])[0];
-    sortConfig.value = { key, descending };
+    sortConfig.value = { key: key as any, descending };
   }
 
   const sortedData = computed<T[]>(() => {
