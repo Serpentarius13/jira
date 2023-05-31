@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { VariantProps } from "class-variance-authority";
-import { buttonVariants } from "./buttonVariants";
+import { buttonVariants } from "./buttonVariants.js";
 
 interface IButton extends VariantProps<typeof buttonVariants> {}
 
