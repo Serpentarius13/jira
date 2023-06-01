@@ -1,6 +1,6 @@
-import { IColumn } from "../types/cards.types";
+import { IStage } from "../types/cards.types";
 
-export const columns: IColumn[] = [
+export const stages: IStage[] = [
   {
     id: 1,
     sort: 10,

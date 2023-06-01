@@ -6,7 +6,16 @@ export default {
       colors: {
         lightblue: "#7CABE3",
         lightgray: "#D5DCE5",
+
+        "lighest-gray": "#F0F3F8",
+
         gray: "#7D8CA1",
+        "medium-gray": "#71747C",
+        "medium-light-gray": " #D2DAE4",
+
+        "dark-gray": "#38393D",
+        "grayish-white": "#E5E9EF",
+        'fwhite': '#F5F5F5'
       },
 
       borderRadius: {
@@ -19,7 +28,12 @@ export default {
       smaller: ["1.3rem", { lineHeight: "1.6rem" }],
       smallest: ["1.2rem", { lineHeight: "1.5rem" }],
       medium: ["1.5rem", { lineHeight: "1.8rem" }],
+      big: ["2rem", { lineHeight: "2.4rem" }],
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addVariant }) {
+      addVariant("child", "& > *");
+    },
+  ],
 };

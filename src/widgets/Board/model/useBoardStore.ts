@@ -1,85 +1,126 @@
 import {
   getFromLocalStorage,
   setToLocalStorage,
-} from "@/shared/utils/localStorage.service";
-import { ICard, IColumn, IProject } from "@/shared/types/cards.types";
+} from "@/shared/utils/services/localStorage.service";
+import { ICard, IStage, IProject } from "@/shared/types/cards.types";
 import { defineStore } from "pinia";
-import { getCards, getColumns, getProjects } from "../api/board.api";
+import { getCards, getProjects, getStages } from "../api/board.api";
+import { findAll } from "@/shared/utils/findAll";
+import useModalStore from "@/shared/stores/useModalStore";
+import CardModalVue from "@/features/CardModal/CardModal.vue";
 
 interface IBoardData {
   cards: ICard[];
-  columns: IColumn[];
+  stages: IStage[];
   projects: IProject[];
 }
 
-const dataKeys: (keyof IBoardData)[] = ["cards", "columns", "projects"];
+type TBoardKey = keyof IBoardData;
+type TBoardValues = IBoardData[TBoardKey];
+
+const dataKeys: (keyof IBoardData)[] = ["cards", "stages", "projects"];
 
 const fetchMap: Record<
   (typeof dataKeys)[number],
   () => Promise<IBoardData[keyof IBoardData]>
 > = {
   cards: getCards,
-  columns: getColumns,
+  stages: getStages,
   projects: getProjects,
 };
 
-interface IBoardStore extends IBoardData {}
+interface IBoardStore {
+  boardStructure: Record<string, ICard[]>;
+  data: IBoardData;
+}
 
 export const useBoardStore = defineStore("board-store", {
   state: (): IBoardStore => ({
-    cards: [],
-    columns: [],
-    projects: [],
+    data: {
+      cards: [],
+      stages: [],
+      projects: [],
+    },
+    boardStructure: {},
   }),
   actions: {
-    async initialize() {
+    async initializeStore() {
       await Promise.all(
         dataKeys.map(async (key) => {
-          const curValues = getFromLocalStorage(key);
+          let curValues = getFromLocalStorage(key);
 
-          let data;
+          let data: IBoardData[TBoardKey];
 
-          if (!curValues) {
+          if (!curValues || curValues.length < 3) {
             const fn = fetchMap[key];
+
             data = await fn();
-            //@ts-expect-error
-            acc[cur] = data;
           } else {
             data = JSON.parse(curValues);
-            //@ts-expect-error
-            acc[cur] = data;
           }
 
-          this[key] = data;
+          this.data[key] = data;
         })
       );
 
+      this.boardStructure = this.data.stages.reduce((acc, cur) => {
+        const cards = findAll(this.data.cards, (c) => c.stage === cur.code);
+
+        console.log(cur.code);
+
+        acc[cur.code] = cards;
+
+        return acc;
+      }, {} as Record<string, ICard[]>);
+
       this.updateLocalStorage();
+
+      console.log(this.boardStructure);
     },
 
     updateLocalStorage() {
-      setToLocalStorage("cards", this.cards);
-      setToLocalStorage("projects", this.projects);
-      setToLocalStorage("columns", this.columns);
+      Object.keys(this.data).forEach((k) => {
+        setToLocalStorage(k, this.data[k]);
+      });
     },
 
     addCard(card: ICard) {
-      this.cards.push(card);
+      this.data.cards.push(card);
       this.updateLocalStorage();
     },
 
     removeCard(cardId: ICard["id"]) {
-      this.cards = this.cards.filter((c) => c.id !== cardId);
+      this.data.cards = this.data.cards.filter((c) => c.id !== cardId);
       this.updateLocalStorage();
     },
 
+    getCardByStage(stage: IStage["name"]) {
+      return this.data.cards.find((c) => c.stage === stage);
+    },
+
+    getStageByCode(code: IStage["code"]) {
+      this.data.stages.find((s) => s.code === code);
+    },
+
     updateCard(cardData: ICard) {
-      this.cards = this.cards.map((c) => {
+      this.data.cards = this.data.cards.map((c) => {
         if (c.id === cardData.id) return cardData;
         else return c;
       });
       this.updateLocalStorage();
     },
+
+    openEditCardModal(card?: Omit<ICard, "id">) {
+      const modalStore = useModalStore();
+      modalStore.openModal({
+        component: CardModalVue,
+        props: card ? { ...card } : {},
+      });
+    },
   },
-  getters: {},
+  getters: {
+    stagesGetter(state) {
+      return Object.keys(state.boardStructure);
+    },
+  },
 });

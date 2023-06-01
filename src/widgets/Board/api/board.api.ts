@@ -1,13 +1,13 @@
 import { cards } from "@/shared/constants/cards";
-import { columns } from "@/shared/constants/columns";
+import { stages } from "@/shared/constants/stages";
 import { projects } from "@/shared/constants/projects";
 import { sleep } from "@/shared/utils/sleep";
 
 const timeout = 2000;
 
-export async function getColumns() {
+export async function getStages() {
   await sleep(timeout);
-  return columns;
+  return stages;
 }
 
 export async function getCards() {

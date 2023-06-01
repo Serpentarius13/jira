@@ -3,7 +3,6 @@ import { defineStore } from "pinia";
 import { extend } from "@vue/shared";
 
 import { lockBody, unlockBody } from "@/shared/utils/overflow";
-import { ICard } from "../types/cards.types";
 
 const component = extend({});
 type VueComponent = InstanceType<typeof component>;
@@ -44,11 +43,6 @@ const useModalStore = defineStore("modalStore", {
 
       unlockBody();
     },
-
-    openEditCardModal(card?: ICard) {
-
-        this.openModal({component: })
-    }
   },
 });
 

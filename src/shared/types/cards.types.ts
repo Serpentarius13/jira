@@ -1,6 +1,6 @@
 import { TID } from "./shared.types";
 
-export interface IColumn {
+export interface IStage {
   id: TID;
   sort: number;
   name: string;
@@ -14,6 +14,7 @@ export interface ICard {
   project: boolean | string;
   score: number;
 }
+
 
 export interface IProject {
   id: TID;

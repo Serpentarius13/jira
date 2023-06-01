@@ -19,7 +19,9 @@ interface IIcon {
 
 const { name } = defineProps<IIcon>();
 
-const icon = defineAsyncComponent(() => import(`~/assets/icons/${name}.svg`));
+const icon = defineAsyncComponent(
+  () => import(`../../../../assets/icons/${name}.svg`)
+);
 </script>
 
 <style scoped lang="scss"></style>
