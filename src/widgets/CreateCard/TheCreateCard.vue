@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import CardForm from "@/features/CardForm/CardForm.vue";
-import { useBoardStore } from "../Board/model/useBoardStore";
+import { useBoardStore } from "../Board/model/useBoardStore.js";
 
 const store = useBoardStore();
 </script>

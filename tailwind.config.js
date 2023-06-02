@@ -17,7 +17,7 @@ export default {
         "dark-gray": "#38393D",
         "grayish-white": "#E5E9EF",
         fwhite: "#F5F5F5",
-        bgray: '#BAC4D0'
+        bgray: "#BAC4D0",
       },
 
       borderRadius: {

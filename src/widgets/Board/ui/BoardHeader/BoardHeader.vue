@@ -1,8 +1,8 @@
 <template>
-  <header class="w-full flex justify-between">
+  <header class="w-full flex justify-between flex-wrap">
     <h1 class="text-h-small font-bold">Карточки</h1>
 
-    <nav class="flex justify-end flex-1 items-center gap-[0.8rem]">
+    <nav class="flex justify-end flex-1 items-center gap-[0.8rem] flex-wrap">
       <ProjectsSelect
         class="!flex-row !gap-[0.4rem] !items-center max-w-[20rem]"
         v-model="store.currentProject"

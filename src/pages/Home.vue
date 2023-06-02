@@ -1,6 +1,8 @@
 <template>
-  <div class="w-full min-h-screen flex items-center justify-center">
-    <TheBoard />
+  <div class="w-full min-h-screen items-center flex justify-center px-[3.2rem] py-[2.3rem]">
+    <main class="container min-h-[66rem]">
+      <TheBoard />
+    </main>
   </div>
 </template>
 
