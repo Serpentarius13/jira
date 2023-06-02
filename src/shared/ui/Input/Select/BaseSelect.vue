@@ -9,7 +9,7 @@
     <button
       type="button"
       :class="[
-        'flex items-center w-full justify-between gap-[0.8rem] rounded-smallest  px-[1.6rem] py-[0.8rem] text-[1.3rem] ',
+        'flex items-center w-full justify-between gap-[0.8rem] rounded-smallest  px-[1.6rem] py-[0.8rem] text-[1.3rem]  bg-lighest-gray text-gray ',
       ]"
       :aria-expanded="isSelectOpened"
       aria-haspopup="true"
@@ -54,8 +54,6 @@ const emit = defineEmits<{ select: [option: string] }>();
 
 const isSelectOpened = ref<boolean>(false);
 const selectRef = ref<HTMLDivElement | null>(null);
-
-
 
 function selectOption(option: string) {
   emit("select", option);

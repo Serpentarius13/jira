@@ -4,6 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        // ПЯТЬДЕСЯТ ОТТЕНКОВ СЕРОГО 😾
         lightblue: "#7CABE3",
         lightgray: "#D5DCE5",
 
@@ -15,7 +16,8 @@ export default {
 
         "dark-gray": "#38393D",
         "grayish-white": "#E5E9EF",
-        'fwhite': '#F5F5F5'
+        fwhite: "#F5F5F5",
+        bgray: '#BAC4D0'
       },
 
       borderRadius: {
@@ -29,6 +31,7 @@ export default {
       smallest: ["1.2rem", { lineHeight: "1.5rem" }],
       medium: ["1.5rem", { lineHeight: "1.8rem" }],
       big: ["2rem", { lineHeight: "2.4rem" }],
+      "h-small": ["3.2rem", { lineHeight: "3.9rem" }],
     },
   },
   plugins: [

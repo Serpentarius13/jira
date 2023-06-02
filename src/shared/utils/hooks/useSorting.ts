@@ -6,7 +6,7 @@ interface ISortConfig<T> {
 }
 
 export function useSorting<T extends Record<any, any>>(
-  data: T[],
+  data: Ref<T[]>,
   defaultSort?: keyof T,
   defaultConfig?: ISortConfig<T>
 ): { sortedData: Ref<T[]>; sortBy: typeof sortBy; sortOrder: "desc" | "asc" } {
@@ -15,10 +15,11 @@ export function useSorting<T extends Record<any, any>>(
   );
 
   function sortBy(key?: keyof T, descending: boolean = false): void {
-    key = key ?? defaultSort ?? Object.keys(data[0])[0];
+    key = key ?? defaultSort ?? Object.keys(data.value[0])[0];
     sortConfig.value = { key: key as any, descending };
   }
 
+  //@ts-expect-error
   const sortedData = computed<T[]>(() => {
     const config = sortConfig.value;
     if (!config) {
@@ -26,7 +27,7 @@ export function useSorting<T extends Record<any, any>>(
     }
 
     const { key, descending } = config;
-    const sorted = data.slice().sort((a, b) => {
+    const sorted = data.value.slice().sort((a, b) => {
       const valueA = a[key];
       const valueB = b[key];
 

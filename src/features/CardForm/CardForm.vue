@@ -1,5 +1,8 @@
 <template>
-  <form class="flex flex-col w-full h-full justify-between">
+  <form
+    class="flex flex-col w-full h-full flex-1 justify-between"
+    @submit.prevent
+  >
     <div class="flex flex-col gap-[2rem]">
       <InputLabel label="Заголовок *:">
         <TextInput placeholder="Заголовок" v-model="formValues['title']" />
@@ -7,30 +10,29 @@
 
       <!-- select -->
 
-      <InputLabel label="Проект:">
-        <TheValuedSelect
-          :options="valuedProjects"
-          placeholder="Выберите проект"
-          v-model="project"
-        />
-      </InputLabel>
+      <ProjectsSelect v-model="formValues['project']" />
 
-      <InputLabel label="Стадия *:" v-if="stages && !isFromModal">
+      <InputLabel label="Стадия *:" v-if="valuedStages && !isFromModal">
         <TheValuedSelect
           :options="valuedStages"
-          placeholder="Выберите стадию"
-          v-model="stage"
+          placeholder="Не выбрано"
+          v-model="formValues['stage']"
         />
       </InputLabel>
 
       <InputLabel label="Балл *:">
-        <TextInput placeholder="Балл" v-model="formValues['score']" />
+        <TextInput
+          placeholder="Балл"
+          v-model="formValues['score']"
+          class="max-w-[8rem]"
+        />
       </InputLabel>
     </div>
 
-    <div class="flex gap-[0.4rem] mx-auto items-center">
-      <BaseButton type="submit" />
-
+    <div class="flex gap-[0.4rem] mx-auto items-center mt-auto group">
+      <LoadingButton type="submit" :on-click="handleFormSubmit">
+        Добавить
+      </LoadingButton>
       <BaseButton :link="{ to: '..' }" class="outline" v-if="!isFromModal"
         >Назад</BaseButton
       >
@@ -47,36 +49,101 @@ import InputLabel from "@/shared/ui/Input/Label/InputLabel.vue";
 
 import TheValuedSelect from "@/shared/ui/Input/Select/TheValuedSelect.vue";
 import TextInput from "@/shared/ui/Input/TextInput/TextInput.vue";
-import { useBoardStore } from "@/widgets/Board/model/useBoardStore";
+
 import { computed } from "@vue/reactivity";
-import { reactive, ref } from "vue";
 
-type TCardOmitted = Pick<ICard, "title" | "project" | "score" | "stage">;
-
-const project = ref<string>("");
-const stage = ref<string>("");
-
-const store = useBoardStore();
-
-const valuedProjects = computed<IValuedSelect["options"]>(() =>
-  store.data.projects.map((p) => ({ value: p.code, name: p.name }))
-);
-
-const valuedStages = computed<IValuedSelect["options"]>(() =>
-  store.data.stages.map((s) => ({ value: s.code, name: s.name }))
-);
+import LoadingButton from "@/shared/ui/LoadingButton/LoadingButton.vue";
+import ProjectsSelect from "../ProjectsSelect/ProjectsSelect.vue";
+import { useBoardStore } from "@/widgets/Board/model/useBoardStore";
+import useModalStore from "@/shared/stores/useModalStore";
+import { reactive } from "vue";
+import { useToast } from "vue-toastification";
+import { useRouter } from "vue-router";
 
 interface ICardForm {
   isFromModal?: boolean;
-  defaultValues?: TCardOmitted;
+  defaultValues?: ICard;
+  stage?: IStage["code"];
 
-  stages?: IStage[];
+  callback: (card: ICard, id?: ICard["id"]) => any;
 }
-const { defaultValues, isFromModal } = defineProps<ICardForm>();
+const {
+  defaultValues = { title: "", project: "", stage: "", score: "", id: NaN },
+  isFromModal,
+  stage,
+  callback,
+} = defineProps<ICardForm>();
 
-const formValues = reactive(
-  defaultValues ?? { title: "", project: "", score: 0, stage: "" }
+const store = useBoardStore();
+const modalStore = useModalStore();
+
+const toast = useToast();
+const router = useRouter();
+
+const valuedStages = computed<IValuedSelect["options"]>(
+  () => store.data.stages.map((s) => ({ value: s.code, name: s.name })) ?? []
 );
+
+type TSchema = {
+  [key in keyof ICard]?: { validations: Function[]; error: string };
+};
+
+const schema: TSchema = {
+  title: {
+    validations: [(t: string) => t.length <= 70 && t.length > 0],
+    error: "Поле заголовок не может иметь больше 70 символов",
+  },
+  score: {
+    validations: [(s: string) => parseFloat(s) >= 0],
+    error: "Поле балл должно быть натуральным числом",
+  },
+};
+
+if (defaultValues?.stage || !isFromModal) {
+  schema.stage = {
+    validations: [(st: string) => st.length > 3],
+    error: "Выберите стадию",
+  };
+}
+
+const formValues = reactive<
+  Pick<ICard, "project" | "title" | "stage"> & { score: number | string }
+>(defaultValues);
+
+const handleFormSubmit = async () => {
+  const isValid = Object.keys(formValues)
+    .map((k) => {
+      const currentSchema = schema[k] as TSchema[keyof TSchema];
+      if (!currentSchema) return true;
+
+      const errors = currentSchema.validations.map((v) => {
+        if (!v(formValues[k])) {
+          toast.warning(currentSchema.error);
+          return false;
+        }
+
+        return true;
+      });
+
+      return errors.every((e) => !!e);
+    })
+    .every((v) => !!v);
+
+  if (!isValid) return;
+  await callback(
+    {
+      ...formValues,
+      stage: formValues.stage || defaultValues?.stage || stage,
+    } as ICard,
+    defaultValues?.id
+  );
+
+  if (isFromModal) {
+    modalStore.closeModal();
+  } else {
+    router.push("/");
+  }
+};
 </script>
 
 <style scoped lang="scss"></style>

@@ -1,10 +1,8 @@
 <template>
-  <ClientOnly>
-    <span
-      class="rotated block aspect-square rounded-[50%] border-black border-transparent border-b-red"
-      :style="{ width: `${size}px`, borderWidth: `${Math.round(+size / 8)}px` }"
-    />
-  </ClientOnly>
+  <span
+    class="rotated block aspect-square rounded-[50%] border-black border-transparent !border-b-black"
+    :style="{ width: `${size}px`, borderWidth: `${Math.round(+size / 8)}px` }"
+  />
 </template>
 
 <script setup lang="ts">

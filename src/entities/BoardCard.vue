@@ -9,17 +9,17 @@
             {{ card.title }}
           </h5>
 
-          <AsyncButton>
+          <button @click="store.openEditCardModal(card, card.stage)">
             <BaseIcon name="edit" />
-          </AsyncButton>
+          </button>
 
-          <AsyncButton>
+          <AsyncButton :on-click="async () => await store.removeCard(card.id)">
             <BaseIcon name="trashcan" />
           </AsyncButton>
         </div>
 
-        <button>
-          <BaseIcon name="dots" />
+        <button class="handle">
+          <BaseIcon name="dots"  />
         </button>
       </div>
 
@@ -43,12 +43,15 @@
 import { ICard } from "@/shared/types/cards.types";
 import AsyncButton from "@/shared/ui/AsyncButton/AsyncButton.vue";
 import BaseIcon from "@/shared/ui/Icon/BaseIcon.vue";
+import { useBoardStore } from "@/widgets/Board/model/useBoardStore";
 
 interface IBoardCard {
   card: ICard;
 }
 
-defineProps<IBoardCard>();
+const store = useBoardStore();
+const pr = defineProps<IBoardCard>();
+console.log(pr);
 </script>
 
 <style scoped lang="scss"></style>

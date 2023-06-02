@@ -18,6 +18,8 @@ interface IBoardData {
 type TBoardKey = keyof IBoardData;
 type TBoardValues = IBoardData[TBoardKey];
 
+import { sleep } from "@/shared/utils/sleep";
+
 const dataKeys: (keyof IBoardData)[] = ["cards", "stages", "projects"];
 
 const fetchMap: Record<
@@ -32,6 +34,7 @@ const fetchMap: Record<
 interface IBoardStore {
   boardStructure: Record<string, ICard[]>;
   data: IBoardData;
+  currentProject: IProject["code"] | null;
 }
 
 export const useBoardStore = defineStore("board-store", {
@@ -42,6 +45,7 @@ export const useBoardStore = defineStore("board-store", {
       projects: [],
     },
     boardStructure: {},
+    currentProject: null,
   }),
   actions: {
     async initializeStore() {
@@ -49,7 +53,7 @@ export const useBoardStore = defineStore("board-store", {
         dataKeys.map(async (key) => {
           let curValues = getFromLocalStorage(key);
 
-          let data: IBoardData[TBoardKey];
+          let data: TBoardValues;
 
           if (!curValues || curValues.length < 3) {
             const fn = fetchMap[key];
@@ -59,39 +63,73 @@ export const useBoardStore = defineStore("board-store", {
             data = JSON.parse(curValues);
           }
 
+          //@ts-expect-error
           this.data[key] = data;
         })
       );
 
+      this.updateLocalStorage();
+    },
+
+    updateLocalStorage() {
+      this.updateBoardStructure();
+      Object.keys(this.data).forEach((k) => {
+        //@ts-expect-error
+        setToLocalStorage(k, this.data[k]);
+      });
+    },
+
+    updateBoardStructure() {
       this.boardStructure = this.data.stages.reduce((acc, cur) => {
         const cards = findAll(this.data.cards, (c) => c.stage === cur.code);
-
-        console.log(cur.code);
 
         acc[cur.code] = cards;
 
         return acc;
       }, {} as Record<string, ICard[]>);
-
-      this.updateLocalStorage();
-
-      console.log(this.boardStructure);
     },
 
-    updateLocalStorage() {
-      Object.keys(this.data).forEach((k) => {
-        setToLocalStorage(k, this.data[k]);
-      });
-    },
+    async addCard(card: ICard) {
+      await sleep(1000);
+      const id = Date.now() + Math.random();
 
-    addCard(card: ICard) {
-      this.data.cards.push(card);
+      console.log(card);
+      this.data.cards.push({ ...card, id });
+
       this.updateLocalStorage();
     },
 
-    removeCard(cardId: ICard["id"]) {
+    async removeCard(cardId: ICard["id"]) {
+      await sleep(1000);
+
       this.data.cards = this.data.cards.filter((c) => c.id !== cardId);
       this.updateLocalStorage();
+    },
+
+    async updateCard(cardData: ICard, id: ICard["id"]) {
+      await sleep(1000);
+      this.data.cards = this.data.cards.map((c) => {
+        if (c.id === id) {
+          return cardData;
+        }
+
+        return c;
+      });
+      this.updateLocalStorage();
+    },
+
+    moveCard(id: ICard["id"], stage: IStage["code"]) {
+      this.data.cards = this.data.cards.map((c) => {
+        if (c.id == id) {
+          return { ...c, stage };
+        } else return c;
+      });
+
+      this.updateLocalStorage();
+    },
+
+    setCurrentProject(code: IProject["code"]) {
+      this.currentProject = code;
     },
 
     getCardByStage(stage: IStage["name"]) {
@@ -99,28 +137,38 @@ export const useBoardStore = defineStore("board-store", {
     },
 
     getStageByCode(code: IStage["code"]) {
-      this.data.stages.find((s) => s.code === code);
+      return this.data.stages.find((s) => s.code === code);
     },
 
-    updateCard(cardData: ICard) {
-      this.data.cards = this.data.cards.map((c) => {
-        if (c.id === cardData.id) return cardData;
-        else return c;
-      });
-      this.updateLocalStorage();
+    getProjectByCode(code: IProject["code"]) {
+      return this.data.projects.find((p) => p.code === code);
+    },
+    openAddCardModal(stage: IStage["code"]) {
+      const foundStage = this.getStageByCode(stage ?? "");
+
+      this.openCardModal(this.addCard, "Добавление", foundStage);
     },
 
-    openEditCardModal(card?: Omit<ICard, "id">) {
+    openEditCardModal(card: ICard, stage: IStage["code"]) {
+      const foundStage = this.getStageByCode(stage ?? "");
+
+      this.openCardModal(this.updateCard, "Изменение", foundStage, card);
+    },
+
+    openCardModal(
+      cb: (...args: any[]) => any,
+
+      title: string,
+      stage?: IStage,
+      card?: Partial<ICard>
+    ) {
       const modalStore = useModalStore();
+
       modalStore.openModal({
         component: CardModalVue,
-        props: card ? { ...card } : {},
+        props: { callback: cb, card, stage, title },
       });
     },
   },
-  getters: {
-    stagesGetter(state) {
-      return Object.keys(state.boardStructure);
-    },
-  },
+  getters: {},
 });

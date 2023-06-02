@@ -4,6 +4,7 @@
     v-if="link"
     :to="link.to"
   >
+    <slot />
   </RouterLink>
 
   <button
@@ -30,7 +31,7 @@ withDefaults(
 
 <style scoped lang="scss">
 .btn {
-  @apply transition-all focus:ring-2 ring-black w-fit border-[1px] border-solid;
+  @apply transition-all focus:ring-2 ring-black w-fit border-[1px] border-solid outline-none flex items-center justify-center;
 
   // Variants
   &.filled {

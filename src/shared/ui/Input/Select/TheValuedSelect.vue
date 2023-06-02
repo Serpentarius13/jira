@@ -11,7 +11,7 @@
     <template #options="{ options: { selectOption } }">
       <li v-for="o in options" :key="o.value" class="w-full">
         <button
-          class="w-full text-small px-[0.4rem] py-[0.8rem] hover:bg-lightblue"
+          class="w-full text-small p-[0.8rem] hover:bg-lightblue text-left"
           @click="
             () => {
               selectOption(o.value);
