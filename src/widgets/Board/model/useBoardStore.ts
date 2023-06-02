@@ -105,7 +105,7 @@ export const useBoardStore = defineStore("board-store", {
       await sleep(1000);
 
       this.data.cards = this.data.cards.filter((c) => c.id !== cardId);
-      this.updateLocalStorage();
+      this.updateBoardStructure();
     },
 
     async updateCard(cardData: ICard, id: ICard["id"]) {
@@ -117,7 +117,8 @@ export const useBoardStore = defineStore("board-store", {
 
         return c;
       });
-      this.updateLocalStorage();
+
+      this.updateBoardStructure();
     },
 
     moveCard(id: ICard["id"], stage: IStage["code"]) {

@@ -61,6 +61,8 @@ import { ButtonVariants } from "@/shared/ui/Button/buttonThemes";
 import { computed } from "vue";
 import ColumnEmpty from "./ColumnEmpty.vue";
 
+
+
 interface IBoardColumn {
   stage: IStage["code"];
 }

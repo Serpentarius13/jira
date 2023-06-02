@@ -13,7 +13,9 @@
         Добавить карточку
       </BaseButton>
 
-      <BaseButton class="filled small"> Сохранить изменения </BaseButton>
+      <BaseButton class="filled small" @click="saveChanges">
+        Сохранить изменения
+      </BaseButton>
     </nav>
   </header>
 </template>
@@ -23,8 +25,17 @@ import ProjectsSelect from "@/features/ProjectsSelect/ProjectsSelect.vue";
 import BaseButton from "@/shared/ui/Button/BaseButton.vue";
 
 import { useBoardStore } from "../../model/useBoardStore";
+import { useToast } from "vue-toastification";
 
 const store = useBoardStore();
+
+const toast = useToast();
+
+function saveChanges() {
+  store.updateLocalStorage();
+
+  toast.success("Успешно сохранено!");
+}
 </script>
 
 <style scoped lang="scss"></style>
