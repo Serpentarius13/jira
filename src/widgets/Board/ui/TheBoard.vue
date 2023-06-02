@@ -1,7 +1,7 @@
 <template>
-  <main class="container">
+  <main class="container" v-if="store.isInitialized">
     <BoardHeader class="pb-[2rem]" />
-    <section class="grid grid-cols-4 gap-[2rem]  items-start">
+    <section class="grid grid-cols-4 gap-[2rem] items-start">
       <BoardColumn
         v-for="(_, stage) in boardStructure"
         :key="stage"
@@ -9,6 +9,8 @@
       />
     </section>
   </main>
+
+  <LoadingScreen v-else />
 </template>
 
 <script setup lang="ts">
@@ -16,6 +18,7 @@ import { useBoardStore } from "../model/useBoardStore";
 import BoardColumn from "./BoardColumn/BoardColumn.vue";
 import { storeToRefs } from "pinia";
 import BoardHeader from "./BoardHeader/BoardHeader.vue";
+import LoadingScreen from "@/widgets/LoadingScreen/LoadingScreen.vue";
 
 const store = useBoardStore();
 

@@ -35,6 +35,7 @@ interface IBoardStore {
   boardStructure: Record<string, ICard[]>;
   data: IBoardData;
   currentProject: IProject["code"] | null;
+  isInitialized: boolean;
 }
 
 export const useBoardStore = defineStore("board-store", {
@@ -46,6 +47,7 @@ export const useBoardStore = defineStore("board-store", {
     },
     boardStructure: {},
     currentProject: null,
+    isInitialized: false,
   }),
   actions: {
     async initializeStore() {
@@ -69,6 +71,7 @@ export const useBoardStore = defineStore("board-store", {
       );
 
       this.updateLocalStorage();
+      this.isInitialized = true;
     },
 
     updateLocalStorage() {
