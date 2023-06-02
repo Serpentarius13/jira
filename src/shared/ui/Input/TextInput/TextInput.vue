@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-const model = defineModel<string>({ required: true });
+const model = defineModel<string | number>({ required: true });
 </script>
 
 <style scoped lang="scss"></style>
