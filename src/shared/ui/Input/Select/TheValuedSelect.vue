@@ -2,7 +2,7 @@
   <BaseSelect
     :options="options.map((o) => o.name)"
     :current-option="name"
-    @select="(v) => (model = v)"
+    @select="(v: any) => (model = v)"
   >
     <template #button>
       {{ name || placeholder }}

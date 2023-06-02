@@ -113,10 +113,12 @@ const formValues = reactive<
 const handleFormSubmit = async () => {
   const isValid = Object.keys(formValues)
     .map((k) => {
+      //@ts-expect-error
       const currentSchema = schema[k] as TSchema[keyof TSchema];
       if (!currentSchema) return true;
 
       const errors = currentSchema.validations.map((v) => {
+        //@ts-expect-error
         if (!v(formValues[k])) {
           toast.warning(currentSchema.error);
           return false;

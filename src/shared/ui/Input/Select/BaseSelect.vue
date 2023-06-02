@@ -48,7 +48,6 @@ interface ISelectProps<T> {
   currentOption: T;
 }
 
-//@ts-expect-error
 const props = defineProps<ISelectProps<T>>();
 const emit = defineEmits<{ select: [option: string] }>();
 
