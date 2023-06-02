@@ -1,5 +1,5 @@
 <template>
-  <main class="container" v-if="store.isInitialized">
+  <main class="container min-h-[66rem]" v-if="store.isInitialized">
     <BoardHeader class="pb-[2rem]" />
     <section class="grid grid-cols-4 gap-[2rem] items-start">
       <BoardColumn
