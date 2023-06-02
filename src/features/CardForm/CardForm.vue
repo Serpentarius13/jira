@@ -10,7 +10,14 @@
 
       <!-- select -->
 
-      <ProjectsSelect v-model="formValues['project']" />
+      <ProjectsSelect
+        v-model="formValues['project']"
+        :default-value="
+          typeof defaultValues?.project === 'string'
+            ? store.getProjectByCode(defaultValues.project)?.name
+            : ''
+        "
+      />
 
       <InputLabel label="Стадия *:" v-if="valuedStages && !isFromModal">
         <TheValuedSelect
@@ -50,13 +57,11 @@ import InputLabel from "@/shared/ui/Input/Label/InputLabel.vue";
 import TheValuedSelect from "@/shared/ui/Input/Select/TheValuedSelect.vue";
 import TextInput from "@/shared/ui/Input/TextInput/TextInput.vue";
 
-import { computed } from "@vue/reactivity";
-
 import LoadingButton from "@/shared/ui/LoadingButton/LoadingButton.vue";
 import ProjectsSelect from "../ProjectsSelect/ProjectsSelect.vue";
 import { useBoardStore } from "@/widgets/Board/model/useBoardStore";
 import useModalStore from "@/shared/stores/useModalStore";
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import { useToast } from "vue-toastification";
 import { useRouter } from "vue-router";
 

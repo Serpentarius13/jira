@@ -96,7 +96,6 @@ export const useBoardStore = defineStore("board-store", {
       await sleep(1000);
       const id = Date.now() + Math.random();
 
-      console.log(card);
       this.data.cards.push({ ...card, id });
 
       this.updateLocalStorage();
@@ -147,13 +146,13 @@ export const useBoardStore = defineStore("board-store", {
       return this.data.projects.find((p) => p.code === code);
     },
     openAddCardModal(stage: IStage["code"]) {
-      const foundStage = this.getStageByCode(stage ?? "");
+      const foundStage = this.getStageByCode(stage);
 
       this.openCardModal(this.addCard, "Добавление", foundStage);
     },
 
     openEditCardModal(card: ICard, stage: IStage["code"]) {
-      const foundStage = this.getStageByCode(stage ?? "");
+      const foundStage = this.getStageByCode(stage);
 
       this.openCardModal(this.updateCard, "Изменение", foundStage, card);
     },

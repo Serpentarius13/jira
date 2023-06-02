@@ -32,9 +32,11 @@ import { IValuedSelect } from "@/shared/types/shared.types";
 import BaseSelect from "./BaseSelect.vue";
 import { ref } from "vue";
 
-defineProps<IValuedSelect & { placeholder?: string }>();
+const props = defineProps<
+  IValuedSelect & { placeholder?: string; defaultValue?: string }
+>();
 
-const name = ref<string>("");
+const name = ref<string>(props.defaultValue ?? "");
 
 const model = defineModel<string>({ required: true });
 </script>

@@ -4,6 +4,7 @@
       :options="valuedProjects"
       placeholder="Не выбрано"
       v-model="model"
+      :defaultValue="defaultValue"
     />
   </InputLabel>
 </template>
@@ -15,7 +16,7 @@ import InputLabel from "@/shared/ui/Input/Label/InputLabel.vue";
 import { useBoardStore } from "@/widgets/Board/model/useBoardStore";
 import { computed } from "vue";
 
-const props = defineProps<{ hasShutdown?: boolean }>();
+const props = defineProps<{ hasShutdown?: boolean, defaultValue?: string }>();
 
 const store = useBoardStore();
 

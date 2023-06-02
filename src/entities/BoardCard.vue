@@ -19,7 +19,7 @@
         </div>
 
         <button class="handle">
-          <BaseIcon name="dots"  />
+          <BaseIcon name="dots" />
         </button>
       </div>
 
@@ -34,7 +34,7 @@
       class="py-[0.4rem] px-[0.8rem] rounded-smallest border-[1px] border-medium-light-gray text-gray bg-grayish-white w-fit"
       v-if="typeof card.project === 'string'"
     >
-      {{ card.project }}
+      {{ store.getProjectByCode(card.project)?.name }}
     </span>
   </div>
 </template>
@@ -50,8 +50,8 @@ interface IBoardCard {
 }
 
 const store = useBoardStore();
-const pr = defineProps<IBoardCard>();
-console.log(pr);
+
+defineProps<IBoardCard>();
 </script>
 
 <style scoped lang="scss"></style>
